@@ -160,6 +160,7 @@ public class MessageProducer<K, V> {
 
     /**
      * @author Daniel McCoy Stephenson
+     * @return The currently specified type of connection for Kafka.
      */
     public static KAFKA_CONNECTION getConnectionType() {
         return connectionType;
@@ -167,6 +168,7 @@ public class MessageProducer<K, V> {
 
     /**
      * @author Daniel McCoy Stephenson
+     * @param newConnectionType The new type of connection for Kafka.
      */
     public static void setConnectionType(KAFKA_CONNECTION newConnectionType) {
         connectionType = newConnectionType;
@@ -190,6 +192,7 @@ public class MessageProducer<K, V> {
 
     /**
      * @author Daniel McCoy Stephenson
+     * @return Properties for a local Kafka instance.
      */
     private static Properties setDefaultPropertiesForLocalKafkaInstance() {
         // NOSONAR
@@ -209,6 +212,7 @@ public class MessageProducer<K, V> {
      * @author Daniel McCoy Stephenson
      * @param clusterAPIKey The API key for the cluster.
      * @param clusterAPISecret The API secret for the cluster.
+     * @return Properties for a Confluent Cloud connection.
      */
     private static Properties setDefaultPropertiesForConfluentCloud(String clusterAPIKey, String clusterAPISecret) {
         Properties properties = new Properties();
@@ -216,7 +220,7 @@ public class MessageProducer<K, V> {
         properties.put("ssl.endpoint.identification.algorithm", "https");
         properties.put("security.protocol", "SASL_SSL");
         properties.put("sasl.mechanism", "PLAIN");
-        properties.put("sasl.jaas.config", "org.apache.kafka.common.security.plain.PlainLoginModule required username=" + clusterAPIKey + " password=" + clusterAPISecret + ";")
+        properties.put("sasl.jaas.config", "org.apache.kafka.common.security.plain.PlainLoginModule required username=" + clusterAPIKey + " password=" + clusterAPISecret + ";");
         return properties;
     }
 
