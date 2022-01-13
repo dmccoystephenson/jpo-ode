@@ -47,6 +47,7 @@ public class MessageProducer<K, V> {
     private Producer<K, V> producer;
     private Set<String> disabledTopicsSet;
 
+    private static KAFKA_CONNECTION connectionType = KAFKA_CONNECTION.LOCAL_INSTANCE;
 
     public MessageProducer(
         String brokers, 
@@ -100,24 +101,6 @@ public class MessageProducer<K, V> {
     public static MessageProducer<String, String> defaultStringMessageProducer(String brokers, String type,
        Set<String> disabledTopics) {
         return new MessageProducer<String, String>(brokers, type, null, SERIALIZATION_STRING_SERIALIZER, disabledTopics);
-    }
-
-    private static Properties setDefaultProperties() {
-        // NOSONAR
-        Properties props = new Properties();
-        props.put("acks", DEFAULT_PRODUCER_ACKS); // Set acknowledgments for
-        // producer requests.
-        props.put("retries", DEFAULT_PRODUCER_RETRIES); // If the request fails,
-        // the producer can
-        // automatically retry
-        props.put("batch.size", DEFAULT_PRODUCER_BATCH_SIZE_BYTES);
-        props.put("linger.ms", DEFAULT_PRODUCER_LINGER_MS);
-        // The buffer.memory controls the
-        // total amount of memory
-        // available to the producer for
-        // buffering.
-        props.put("buffer.memory", DEFAULT_PRODUCER_BUFFER_MEMORY_BYTES);
-        return props;
     }
 
     public void send(String topic, K key, V value) {
@@ -175,4 +158,73 @@ public class MessageProducer<K, V> {
 
     }
 
+    /**
+     * @author Daniel McCoy Stephenson
+     */
+    public static KAFKA_CONNECTION getConnectionType() {
+        return connectionType;
+    }
+
+    /**
+     * @author Daniel McCoy Stephenson
+     */
+    public static void setConnectionType(KAFKA_CONNECTION newConnectionType) {
+        connectionType = newConnectionType;
+    }
+
+    /**
+     * @author Daniel McCoy Stephenson
+     */
+    private static Properties setDefaultProperties() {
+        switch(connectionType) {
+            case LOCAL_INSTANCE:
+                return setDefaultPropertiesForLocalKafkaInstance();
+            case CONFLUENT_CLOUD:
+                String APIKey = null; // TODO: introduce environment variable for this
+                String APISecret = null; // TODO: introduce environment variable for this
+                return setDefaultPropertiesForConfluentCloud(APIKey, APISecret);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * @author Daniel McCoy Stephenson
+     */
+    private static Properties setDefaultPropertiesForLocalKafkaInstance() {
+        // NOSONAR
+        Properties props = new Properties();
+        
+        props.put("acks", DEFAULT_PRODUCER_ACKS); // Set acknowledgments for producer requests.
+        props.put("retries", DEFAULT_PRODUCER_RETRIES); // If the request fails, the producer can automatically retry
+        props.put("batch.size", DEFAULT_PRODUCER_BATCH_SIZE_BYTES);
+        props.put("linger.ms", DEFAULT_PRODUCER_LINGER_MS);
+
+        // The buffer.memory controls the total amount of memory available to the producer for buffering.
+        props.put("buffer.memory", DEFAULT_PRODUCER_BUFFER_MEMORY_BYTES);
+        return props;
+    }
+
+    /**
+     * @author Daniel McCoy Stephenson
+     * @param clusterAPIKey The API key for the cluster.
+     * @param clusterAPISecret The API secret for the cluster.
+     */
+    private static Properties setDefaultPropertiesForConfluentCloud(String clusterAPIKey, String clusterAPISecret) {
+        Properties properties = new Properties();
+        properties.put("bootstrap.servers", "pkc-43n10.us-central1.gcp.confluent.cloud:9092");
+        properties.put("ssl.endpoint.identification.algorithm", "https");
+        properties.put("security.protocol", "SASL_SSL");
+        properties.put("sasl.mechanism", "PLAIN");
+        properties.put("sasl.jaas.config", "org.apache.kafka.common.security.plain.PlainLoginModule required username=" + clusterAPIKey + " password=" + clusterAPISecret + ";")
+        return properties;
+    }
+
+    /**
+     * @author Daniel McCoy Stephenson
+     */
+    private enum KAFKA_CONNECTION {
+        LOCAL_INSTANCE,
+        CONFLUENT_CLOUD
+    }
 }
