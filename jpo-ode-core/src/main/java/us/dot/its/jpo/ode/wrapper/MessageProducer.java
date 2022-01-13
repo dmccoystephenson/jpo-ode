@@ -159,7 +159,6 @@ public class MessageProducer<K, V> {
     }
 
     /**
-     * @author Daniel McCoy Stephenson
      * @return The currently specified type of connection for Kafka.
      */
     public static KAFKA_CONNECTION getConnectionType() {
@@ -167,16 +166,12 @@ public class MessageProducer<K, V> {
     }
 
     /**
-     * @author Daniel McCoy Stephenson
      * @param newConnectionType The new type of connection for Kafka.
      */
     public static void setConnectionType(KAFKA_CONNECTION newConnectionType) {
         connectionType = newConnectionType;
     }
 
-    /**
-     * @author Daniel McCoy Stephenson
-     */
     private static Properties setDefaultProperties() {
         switch(connectionType) {
             case LOCAL_INSTANCE:
@@ -191,7 +186,6 @@ public class MessageProducer<K, V> {
     }
 
     /**
-     * @author Daniel McCoy Stephenson
      * @return Properties for a local Kafka instance.
      */
     private static Properties setDefaultPropertiesForLocalKafkaInstance() {
@@ -209,7 +203,6 @@ public class MessageProducer<K, V> {
     }
 
     /**
-     * @author Daniel McCoy Stephenson
      * @param clusterAPIKey The API key for the cluster.
      * @param clusterAPISecret The API secret for the cluster.
      * @return Properties for a Confluent Cloud connection.
@@ -224,9 +217,6 @@ public class MessageProducer<K, V> {
         return properties;
     }
 
-    /**
-     * @author Daniel McCoy Stephenson
-     */
     private enum KAFKA_CONNECTION {
         LOCAL_INSTANCE,
         CONFLUENT_CLOUD
