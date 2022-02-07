@@ -211,8 +211,8 @@ public class SnmpSession {
       ScopedPDU pdu = SnmpSession.createPDU(snmp, payload, rsu.getRsuIndex(), requestVerb);
       response = session.set(pdu, session.getSnmp(), session.getTarget(), false);
       String msg = "Message Sent to {}, index {}: {}";
-      EventLogger.logger.info(msg, rsu.getRsuTarget(), rsu.getRsuIndex(), payload);
-      logger.info(msg, rsu.getRsuTarget(), rsu.getRsuIndex(), payload);
+      EventLogger.logger.debug(msg, rsu.getRsuTarget(), rsu.getRsuIndex(), payload);
+      logger.debug(msg, rsu.getRsuTarget(), rsu.getRsuIndex(), payload);
       return response;
    }
 
