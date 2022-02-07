@@ -70,8 +70,6 @@ public class TimReceiver extends AbstractUdpReceiverPublisher {
                   continue;
                String payloadHexString = HexUtils.toHexString(payload);
                logger.debug("Packet: {}", payloadHexString);
-               
-               logger.debug("Creating Decoded TIM JSON Object...");
 
                // Add header data for the decoding process
                ZonedDateTime utc = ZonedDateTime.now(ZoneOffset.UTC);
@@ -94,8 +92,6 @@ public class TimReceiver extends AbstractUdpReceiverPublisher {
                logger.debug("TIM JSON Object: {}", jsonObject.toString());
 
                // Submit JSON to the OdeRawEncodedMessageJson Kafka Topic
-               logger.debug("Publishing JSON TIM...");
-
                this.timPublisher.publish(jsonObject.toString(), this.timPublisher.getOdeProperties().getKafkaTopicOdeRawEncodedTIMJson());
             }
          } catch (Exception e) {
@@ -118,7 +114,7 @@ public class TimReceiver extends AbstractUdpReceiverPublisher {
 
       int startIndex = hexPacket.indexOf(TIM_START_FLAG);
       if (startIndex == 0) {
-         logger.info("Message is raw TIM with no headers.");
+         logger.debug("Message is raw TIM with no headers.");
       } else if (startIndex == -1) {
          logger.error("Message contains no TIM start flag.");
          return null;
