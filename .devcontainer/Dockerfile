@@ -28,7 +28,8 @@ RUN apt-get update \
     && chmod 0440 /etc/sudoers.d/$USERNAME \
     #
     # Verify git, needed tools installed
-    && apt-get -y install git openssh-client less iproute2 procps curl lsb-release zip unzip sed kafkacat telnet
+    && apt-get -y install git openssh-client less iproute2 procps curl lsb-release zip unzip sed kafkacat telnet \
+    && apt-get -y install g++ cmake libsasl2-dev libsasl2-modules libssl-dev librdkafka-dev autoconf libtool
 
 #-------------------Install SDKMan----------------------------------
 RUN curl -s https://get.sdkman.io | bash
